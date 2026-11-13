@@ -35,7 +35,7 @@
   }
 
   .wrap {
-    max-width: 680px;
+    max-width: var(--col);
     margin: 0 auto;
     padding: 48px 20px 80px;
   }
@@ -117,6 +117,7 @@
     padding: 11px 22px;
   }
   .add:hover, .play:hover { filter: brightness(.94); }
+  .game { box-shadow: 0 2px 0 #0002; }
   .add:active, .play:active { transform: translateY(1px); }
 
   .error {
@@ -206,19 +207,13 @@
     color: #d5dbf8;
   }
 
-  /* sponsored section */
+  /* ads */
+  :root { --col: 680px; }
+
   .ads { margin-top: 40px; }
-  .ads-title {
-    margin: 0 0 10px;
-    color: #d5dbf8;
-    font-size: .9rem;
-  }
-  .ad-tile {
-    background: #e6e8f5;
-    color: var(--grey);
-    font-size: 1rem;
-    transform: none;
-  }
+  .ads-title { margin: 0 0 10px; color: #d5dbf8; font-size: .9rem; }
+  .ad-tile { background: #e6e8f5; color: var(--grey); font-size: 1rem; transform: none; }
+
   .ad-banner {
     display: block;
     margin-top: 14px;
@@ -226,20 +221,27 @@
     overflow: hidden;
     background: var(--white);
   }
-  .ad-banner img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
+  .ad-banner img { display: block; width: 100%; height: auto; }
 
+  .native-ad { margin-top: 14px; }
+  .native-ad:empty { margin-top: 0; } /* no gap if the ad doesn't load or is blocked */
+
+  /* fixed-size banners sit in a box that scrolls sideways instead of breaking the page */
   .banner-300 {
     margin-top: 14px;
     display: flex;
     justify-content: center;
-    overflow-x: auto; /* the ad is a fixed 300px wide, so very small phones can scroll it */
+    overflow-x: auto;
   }
-  .native-ad { margin-top: 14px; }
-  .native-ad:empty { margin-top: 0; } /* no gap if the ad doesn't load or is blocked */
+  .top-ad {
+    display: flex;
+    justify-content: center;
+    padding: 12px 10px 0;
+  }
+  /* side ads sit in the free space beside the content column (screens 1100px and wider) */
+  .side-ad { position: fixed; top: 20px; z-index: 5; }
+  .side-left  { left:  calc(50% - var(--col) / 2 - 20px - 160px); }
+  .side-right { right: calc(50% - var(--col) / 2 - 20px - 160px); }
 
   /* "Removed, undo" bar */
   .undo {
@@ -280,8 +282,33 @@
     .play { margin-left: 62px; }
   }
 </style>
+<script>
+  // Banner from bauval.org. It draws itself at the spot where this call is written.
+  function showAd(key, width, height) {
+    window.atOptions = { key: key, format: "iframe", height: height, width: width, params: {} };
+    document.write('<scr' + 'ipt src="https://bauval.org/22/' + key + '"></scr' + 'ipt>');
+  }
+</script>
 </head>
 <body>
+<!-- Top banner: only the size that fits the screen is loaded, so nothing hidden is requested -->
+<div class="top-ad">
+  <script>
+    var w = window.innerWidth;
+    if (w >= 768)      showAd("ec493aadb4493edfa16b9598389e6610", 728, 90);
+    else if (w >= 500) showAd("700db3a3a27fcc265f7446b4d0a16011", 468, 60);
+    else               showAd("3a264582de9b701ccfdf4eeed7a4ac9a", 320, 50);
+  </script>
+</div>
+
+<!-- Side banners: only loaded when there is free space beside the content column -->
+<div class="side-ad side-left">
+  <script>if (window.innerWidth >= 1100) showAd("61b80fcd856d7ce4b2bbc638891e2623", 160, 600);</script>
+</div>
+<div class="side-ad side-right">
+  <script>if (window.innerWidth >= 1100) showAd("ea953b3117e3db501d499f30d7ddfb67", 160, 300);</script>
+</div>
+
 <div class="wrap">
   <p class="brand">PlayZone</p>
 
@@ -337,18 +364,8 @@
     <script async="async" data-cfasync="false" src="https://bauval.org/21/47e8d16388f56867296a059fa0ca8ffe"></script>
     <div class="native-ad" id="container-47e8d16388f56867296a059fa0ca8ffe"></div>
 
-    <!-- 300x250 banner from bauval.org. The ad draws itself where this script sits, so keep both scripts together. -->
     <div class="banner-300">
-      <script>
-        atOptions = {
-          'key' : '248986d342db51d104aefcbb09b03edc',
-          'format' : 'iframe',
-          'height' : 250,
-          'width' : 300,
-          'params' : {}
-        };
-      </script>
-      <script src="https://bauval.org/22/248986d342db51d104aefcbb09b03edc"></script>
+      <script>showAd("248986d342db51d104aefcbb09b03edc", 300, 250);</script>
     </div>
   </section>
 
