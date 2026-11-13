@@ -1,0 +1,12 @@
+{
+  "name": "playzone-game-hub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A responsive browser game link hub",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
